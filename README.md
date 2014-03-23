@@ -6,7 +6,7 @@ var express = require('express')
 var app = express()
 var client = require('redis').createClient()
 
-var limitter = require('rate-limitter')(app, client)
+var limitter = require('express-limiter')(app, client)
 
 limitter({
   path: '/api/action',
