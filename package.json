@@ -1,6 +1,6 @@
 {
   "name": "rate-limitter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "rate limitter middleware for express applications",
   "main": "index.js",
   "author": "Dustin Diaz",
