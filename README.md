@@ -66,3 +66,7 @@ limiter({
   lookup: ['user.id', 'connection.remoteAddress']
 })
 ```
+
+## License MIT
+
+Happy Rate Limitting!
