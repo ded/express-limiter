@@ -18,6 +18,8 @@
   "homepage": "https://github.com/ded/rate-limitter",
   "devDependencies": {
     "mocha": "~1.18.2",
-    "redis": "~0.10.1"
+    "redis": "~0.10.1",
+    "express": "~3.5.0",
+    "chai": "~1.9.1"
   }
 }
