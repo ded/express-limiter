@@ -1,4 +1,4 @@
-## Express rate-limitter
+## Express rate-limiter
 Rate limiting middleware for Express applications built on redis
 
 ``` js
