@@ -1,6 +1,6 @@
 {
   "name": "express-limiter",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "rate limiter middleware for express applications",
   "main": "index.js",
   "author": "Dustin Diaz",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ded/express-limiter.git"
+    "url": "git://github.com/ded/express-limiter.git"
   },
   "bugs": {
     "url": "https://github.com/ded/express-limiter/issues"
