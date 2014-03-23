@@ -1,7 +1,7 @@
 {
   "name": "express-limiter",
   "version": "1.0.0",
-  "description": "rate limitter middleware for express applications",
+  "description": "rate limiter middleware for express applications",
   "main": "index.js",
   "author": "Dustin Diaz",
   "license": "MIT",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ded/rate-limitter.git"
+    "url": "https://github.com/ded/express-limiter.git"
   },
   "bugs": {
-    "url": "https://github.com/ded/rate-limitter/issues"
+    "url": "https://github.com/ded/express-limiter/issues"
   },
-  "homepage": "https://github.com/ded/rate-limitter",
+  "homepage": "https://github.com/ded/express-limiter",
   "devDependencies": {
     "express": "~4.0.0-rc3",
     "redis": "~0.10.1",
@@ -24,9 +24,6 @@
     "sinon": "~1.9.0",
     "sinon-chai": "~2.5.0",
     "supertest": "~0.10.0",
-    "valentine": "~2.0.2"
-  },
-  "dependencies": {
     "valentine": "~2.0.2"
   }
 }
