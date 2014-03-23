@@ -67,7 +67,7 @@ limiter({
   lookup: ['user.id', 'connection.remoteAddress']
 })
 
-// whitelist user amins
+// whitelist user admins
 limiter({
   path: '/delete/thing',
   method: 'post',
