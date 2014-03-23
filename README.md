@@ -32,8 +32,8 @@ app.get('/api/action', function (req, res) {
 limiter(options)
 ```
 
- - `path`: `String` route path to the request
- - `method`: `String` http method. accepts `get`, `post`, `put`, `delete`, and of course Express' `all`
+ - `path`: `String` *optional* route path to the request
+ - `method`: `String` *optional* http method. accepts `get`, `post`, `put`, `delete`, and of course Express' `all`
  - `lookup`: `String|Array.<String>` value lookup on the request object. Can be a single value or array. See [examples](#examples) for common usages
  - `total`: `Number` allowed number of requests before getting rate limited
  - `expire`: `Number` amount of time in `ms` before the rate-limited is reset
@@ -44,7 +44,9 @@ limiter(options)
 ``` js
 // limit by IP address
 limiter({
+  ...
   lookup: 'connection.remoteAddress'
+  ...
 })
 
 // or if you are behind a trusted proxy (like nginx)
@@ -80,7 +82,17 @@ limiter({
     return !!req.user.is_admin
   }
 })
+```
 
+### as direct middleware
+
+``` js
+app.post('/user/update', limiter({ lookup: 'user.id' }), function (req, res) {
+  User.find(req.user.id).update(function (err) {
+    if (err) next(err)
+    else res.send('ok')
+  })
+})
 ```
 
 ## License MIT

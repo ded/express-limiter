@@ -1,6 +1,6 @@
 module.exports = function (app, db) {
   return function (opts) {
-    app[opts.method](opts.path, function (req, res, next) {
+    var middleware = function (req, res, next) {
       if (opts.whitelist && opts.whitelist(req)) return next()
       opts.lookup = Array.isArray(opts.lookup) ? opts.lookup : [opts.lookup]
 
@@ -40,7 +40,8 @@ module.exports = function (app, db) {
         })
 
       })
-
-    })
+    }
+    if (opts.method && opts.path) app[opts.method](opts.path, middleware)
+    return middleware
   }
 }
