@@ -10,9 +10,9 @@ var express = require('express')
 var app = express()
 var client = require('redis').createClient()
 
-var limitter = require('express-limiter')(app, client)
+var limiter = require('express-limiter')(app, client)
 
-limitter({
+limiter({
   path: '/api/action',
   method: 'get',
   lookup: ['connection.remoteAddress'],
@@ -37,13 +37,13 @@ limiter(options)
  - `lookup`: `String|Array.<String>` value lookup on the request object. Can be a single value or array. See [examples](#examples) for common usages
  - `total`: `Number` allowed number of requests before getting rate limited
  - `expire`: `Number` amount of time in `ms` before the rate-limited is reset
- - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limitter.
+ - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limiter.
 
 ### Examples
 
 ``` js
 // limit by IP address
-limitter({
+limiter({
   lookup: 'connection.remoteAddress'
 })
 
