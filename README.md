@@ -28,11 +28,12 @@ app.get('/api/action', function (req, res) {
 limiter(options)
 ```
 
- - `path`: route path to the request
- - `method`: http method. accepts `get`, `post`, `put`, `delete`, and of course Express' `all`
- - `lookup`: value lookup on the request object. Can be a single value or array. See [examples](#examples) for common usages
- - `total`: allowed number of requests before getting rate limited
- - `expire`: amount of time in `ms` before the rate-limited is reset
+ - `path`: `String` route path to the request
+ - `method`: `String` http method. accepts `get`, `post`, `put`, `delete`, and of course Express' `all`
+ - `lookup`: `String|Array.<String>` value lookup on the request object. Can be a single value or array. See [examples](#examples) for common usages
+ - `total`: `Number` allowed number of requests before getting rate limited
+ - `expire`: `Number` amount of time in `ms` before the rate-limited is reset
+ - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limitter.
 
 ### Examples
 
@@ -65,6 +66,17 @@ limiter({
   method: 'all',
   lookup: ['user.id', 'connection.remoteAddress']
 })
+
+// whitelist user amins
+limiter({
+  path: '/delete/thing',
+  method: 'post',
+  lookup: 'user.id',
+  whitelist: function (req) {
+    return !!req.user.is_admin
+  }
+})
+
 ```
 
 ## License MIT

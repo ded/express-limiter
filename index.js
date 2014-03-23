@@ -1,6 +1,7 @@
 module.exports = function (app, db) {
   return function (opts) {
     app[opts.method](opts.path, function (req, res, next) {
+      if (opts.whitelist && opts.whitelist(req)) return next()
       opts.lookup = Array.isArray(opts.lookup) ? opts.lookup : [opts.lookup]
 
       var lookups = opts.lookup.map(function (item) {
