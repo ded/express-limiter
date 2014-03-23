@@ -1,6 +1,10 @@
 ## Express rate-limiter
 Rate limiting middleware for Express applications built on redis
 
+``` sh
+npm install express-limiter --save
+```
+
 ``` js
 var express = require('express')
 var app = express()
