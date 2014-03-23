@@ -1,0 +1,22 @@
+{
+  "name": "rate-limitter",
+  "version": "0.0.0",
+  "description": "rate limitter middleware for express applications",
+  "main": "index.js",
+  "author": "Dustin Diaz",
+  "license": "MIT",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ded/rate-limitter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ded/rate-limitter/issues"
+  },
+  "homepage": "https://github.com/ded/rate-limitter",
+  "devDependencies": {
+    "mocha": "~1.18.2"
+  }
+}
