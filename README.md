@@ -51,4 +51,18 @@ limiter({
 limiter({
   lookup: 'user.id'
 })
+
+// limit your entire app
+limiter({
+  path: '*',
+  method: 'all',
+  lookup: 'connection.remoteAddress'
+})
+
+// limit users on same IP
+limiter({
+  path: '*',
+  method: 'all',
+  lookup: ['user.id', 'connection.remoteAddress']
+})
 ```
