@@ -97,4 +97,4 @@ app.post('/user/update', limiter({ lookup: 'user.id' }), function (req, res) {
 
 ## License MIT
 
-Happy Rate Limitting!
+Happy Rate Limiting!

@@ -8,13 +8,13 @@ var chai = require('chai')
 
 chai.use(require('sinon-chai'))
 
-describe('rate-limitter', function () {
+describe('rate-limiter', function () {
   var express, app
 
   beforeEach(function () {
     express = require('express')
     app = express()
-    limitter = subject(app, redis)
+    limiter = subject(app, redis)
   })
 
   afterEach(function (done) {
@@ -24,7 +24,7 @@ describe('rate-limitter', function () {
   it('should work', function (done) {
     var map = [10, 9, 8, 7, 6, 5, 4, 3, 2]
     var clock = sinon.useFakeTimers()
-    limitter({
+    limiter({
       path: '/route',
       method: 'get',
       lookup: ['connection.remoteAddress'],
