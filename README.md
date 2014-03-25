@@ -12,6 +12,13 @@ var client = require('redis').createClient()
 
 var limiter = require('express-limiter')(app, client)
 
+/**
+ * you may also pass it an Express 4.0 `Router`
+ *
+ * router = express.Router()
+ * limiter = require('express-limiter')(router, client)
+ */
+
 limiter({
   path: '/api/action',
   method: 'get',
