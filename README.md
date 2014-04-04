@@ -45,7 +45,7 @@ limiter(options)
  - `total`: `Number` allowed number of requests before getting rate limited
  - `expire`: `Number` amount of time in `ms` before the rate-limited is reset
  - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limiter.
-
+ - `skipHeaders`: `Boolean` whether to skip sending HTTP headers for rate limits ()
 ### Examples
 
 ``` js
@@ -89,6 +89,18 @@ limiter({
     return !!req.user.is_admin
   }
 })
+
+// skip sending HTTP limit headers
+limiter({
+  path: '/delete/thing',
+  method: 'post',
+  lookup: 'user.id',
+  whitelist: function (req) {
+    return !!req.user.is_admin
+  },
+  skipHeaders: true
+})
+
 ```
 
 ### as direct middleware

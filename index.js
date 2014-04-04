@@ -28,14 +28,17 @@ module.exports = function (app, db) {
         limit.remaining = Math.max(Number(limit.remaining) - 1, 0)
 
         db.set(key, JSON.stringify(limit), function () {
-          res.set('X-RateLimit-Limit', limit.total)
-          res.set('X-RateLimit-Remaining', limit.remaining)
+          if (!opts.skipHeaders) {
+            res.set('X-RateLimit-Limit', limit.total)
+            res.set('X-RateLimit-Remaining', limit.remaining)
+          }
 
           if (limit.remaining) return next()
 
           var after = (limit.reset - Date.now()) / 1000
 
-          res.set('Retry-After', after)
+          if (!opts.skipHeaders) res.set('Retry-After', after)
+
           res.send(429, 'Rate limit exceeded')
         })
 
