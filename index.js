@@ -12,6 +12,7 @@ module.exports = function (app, db) {
 
       var key = 'ratelimit:' + opts.path + ':' + opts.method + ':' + lookups
       db.get(key, function (err, limit) {
+        if (err && opts.ignoreErrors) return next()
         var now = Date.now()
         limit = limit ? JSON.parse(limit) : {
           total: opts.total,

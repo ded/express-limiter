@@ -93,5 +93,28 @@ describe('rate-limiter', function () {
           .expect(function(res) { if ('Retry-After' in res.headers) return 'Retry-After not to be set' })
           .expect(429, done)
     })
+
+    it('should process ignoreErrors', function (done) {
+      limiter({
+        path: '/route',
+        method: 'get',
+        lookup: ['connection.remoteAddress'],
+        total: 10,
+        expire: 1000 * 60 * 60,
+        ignoreErrors: true
+      })
+
+      app.get('/route', function (req, res) {
+        res.send(200, 'hello')
+      })
+
+      sinon.stub(redis, 'get', function(key, callback) {
+        callback({err: true})
+      })
+
+      request(app)
+        .get('/route')
+          .expect(200, done)
+    })
   })
 })
