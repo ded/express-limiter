@@ -1,5 +1,4 @@
 var chai = require('chai')
-  , expect = chai.expect
   , request = require('supertest')
   , sinon = require('sinon')
   , redis = require('redis').createClient()
@@ -9,7 +8,7 @@ var chai = require('chai')
 chai.use(require('sinon-chai'))
 
 describe('rate-limiter', function () {
-  var express, app
+  var express, app, limiter
 
   beforeEach(function () {
     express = require('express')
@@ -88,9 +87,15 @@ describe('rate-limiter', function () {
 
       request(app)
         .get('/route')
-          .expect(function(res) { if ('X-RateLimit-Limit' in res.headers) return 'X-RateLimit-Limit Header not to be set' })
-          .expect(function(res) { if ('X-RateLimit-Remaining' in res.headers) return 'X-RateLimit-Remaining Header not to be set' })
-          .expect(function(res) { if ('Retry-After' in res.headers) return 'Retry-After not to be set' })
+          .expect(function(res) {
+            if ('X-RateLimit-Limit' in res.headers) return 'X-RateLimit-Limit Header not to be set'
+          })
+          .expect(function(res) {
+            if ('X-RateLimit-Remaining' in res.headers) return 'X-RateLimit-Remaining Header not to be set'
+          })
+          .expect(function(res) {
+            if ('Retry-After' in res.headers) return 'Retry-After not to be set'
+          })
           .expect(429, done)
     })
 

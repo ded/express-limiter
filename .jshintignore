@@ -1,0 +1,6 @@
+public
+node_modules
+django_app
+client/vendor
+venv
+client/ender
