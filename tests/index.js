@@ -70,8 +70,8 @@ describe('rate-limiter', function () {
     v.waterfall(out, done)
   })
 
-  describe('options', function() {
-    it('should process skipHeaders', function (done) {
+  context('options', function() {
+    it('should process options.skipHeaders', function (done) {
       limiter({
         path: '/route',
         method: 'get',
@@ -113,13 +113,64 @@ describe('rate-limiter', function () {
         res.send(200, 'hello')
       })
 
-      sinon.stub(redis, 'get', function(key, callback) {
+      var stub = sinon.stub(redis, 'get', function(key, callback) {
         callback({err: true})
       })
 
       request(app)
-        .get('/route')
-          .expect(200, done)
+      .get('/route')
+      .expect(200, function (e) {
+        done(e)
+        stub.restore()
+      })
+    })
+  })
+
+  context('direct middleware', function () {
+
+    it('is able to mount without `path` and `method`', function (done) {
+      var clock = sinon.useFakeTimers()
+      var middleware = limiter({
+        lookup: 'connection.remoteAddress',
+        total: 3,
+        expire: 1000 * 60 * 60
+      })
+      app.get('/direct', middleware, function (req, res, next) {
+        res.send(200, 'is direct')
+      })
+      v.waterfall(
+        function (f) {
+          process.nextTick(function () {
+            request(app)
+            .get('/direct')
+            .expect('X-RateLimit-Limit', 3)
+            .expect('X-RateLimit-Remaining', 2)
+            .expect(200, function (e) {f(e)})
+          })
+        },
+        function (f) {
+          process.nextTick(function () {
+            request(app)
+            .get('/direct')
+            .expect('X-RateLimit-Limit', 3)
+            .expect('X-RateLimit-Remaining', 1)
+            .expect(200, function (e) {f(e)})
+          })
+        },
+        function (f) {
+          process.nextTick(function () {
+            request(app)
+            .get('/direct')
+            .expect('X-RateLimit-Limit', 3)
+            .expect('X-RateLimit-Remaining', 0)
+            .expect('Retry-After', /\d+/)
+            .expect(429, function (e) { f(null) })
+          })
+        },
+        function (e) {
+          done(e)
+        }
+      )
     })
   })
 })
