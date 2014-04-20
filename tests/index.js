@@ -24,6 +24,7 @@ describe('rate-limiter', function () {
   it('should work', function (done) {
     var map = [10, 9, 8, 7, 6, 5, 4, 3, 2]
     var clock = sinon.useFakeTimers()
+
     limiter({
       path: '/route',
       method: 'get',
@@ -68,5 +69,52 @@ describe('rate-limiter', function () {
       })
     })
     v.waterfall(out, done)
+  })
+
+  describe('options', function() {
+    it('should process skipHeaders', function (done) {
+      limiter({
+        path: '/route',
+        method: 'get',
+        lookup: ['connection.remoteAddress'],
+        total: 0,
+        expire: 1000 * 60 * 60,
+        skipHeaders: true
+      })
+
+      app.get('/route', function (req, res) {
+        res.send(200, 'hello')
+      })
+
+      request(app)
+        .get('/route')
+          .expect(function(res) { if ('X-RateLimit-Limit' in res.headers) return 'X-RateLimit-Limit Header not to be set' })
+          .expect(function(res) { if ('X-RateLimit-Remaining' in res.headers) return 'X-RateLimit-Remaining Header not to be set' })
+          .expect(function(res) { if ('Retry-After' in res.headers) return 'Retry-After not to be set' })
+          .expect(429, done)
+    })
+
+    it('should process ignoreErrors', function (done) {
+      limiter({
+        path: '/route',
+        method: 'get',
+        lookup: ['connection.remoteAddress'],
+        total: 10,
+        expire: 1000 * 60 * 60,
+        ignoreErrors: true
+      })
+
+      app.get('/route', function (req, res) {
+        res.send(200, 'hello')
+      })
+
+      sinon.stub(redis, 'get', function(key, callback) {
+        callback({err: true})
+      })
+
+      request(app)
+        .get('/route')
+          .expect(200, done)
+    })
   })
 })
