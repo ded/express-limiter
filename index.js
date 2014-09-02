@@ -26,6 +26,8 @@ module.exports = function (app, db) {
           limit.remaining = opts.total
         }
 
+        var last = Number(limit.remaining) === 1;
+
         // do not allow negative remaining
         limit.remaining = Math.max(Number(limit.remaining) - 1, 0)
         db.set(key, JSON.stringify(limit), 'PX', opts.expire, function (e) {
@@ -34,7 +36,7 @@ module.exports = function (app, db) {
             res.set('X-RateLimit-Remaining', limit.remaining)
           }
 
-          if (limit.remaining) return next()
+          if (limit.remaining || last) return next()
 
           var after = (limit.reset - Date.now()) / 1000
 
