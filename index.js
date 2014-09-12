@@ -40,7 +40,7 @@ module.exports = function (app, db) {
 
           if (!opts.skipHeaders) res.set('Retry-After', after)
 
-          res.send(429, 'Rate limit exceeded')
+          res.status(429).send('Rate limit exceeded')
         })
 
       })
