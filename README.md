@@ -47,6 +47,7 @@ limiter(options)
  - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limiter.
  - `skipHeaders`: `Boolean` whether to skip sending HTTP headers for rate limits ()
  - `ignoreErrors`: `Boolean` whether errors generated from redis should allow the middleware to call next().  Defaults to false.
+ - `jsonResponse`: `JSON` to be returned as a response when rate limit is exceeded
 
 ### Examples
 

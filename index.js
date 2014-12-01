@@ -32,6 +32,7 @@ module.exports = function (app, db) {
           if (!opts.skipHeaders) {
             res.set('X-RateLimit-Limit', limit.total)
             res.set('X-RateLimit-Remaining', limit.remaining)
+            res.set('X-RateLimit-Reset', limit.reset)
           }
 
           if (limit.remaining) return next()
@@ -40,7 +41,11 @@ module.exports = function (app, db) {
 
           if (!opts.skipHeaders) res.set('Retry-After', after)
 
-          res.status(429).send('Rate limit exceeded')
+          if(opts.jsonResponse) {
+            res.status(429).json(opts.jsonResponse);
+          } else {
+            res.status(429).send('Rate limit exceeded');
+          }
         })
 
       })
