@@ -32,6 +32,7 @@ module.exports = function (app, db) {
           if (!opts.skipHeaders) {
             res.set('X-RateLimit-Limit', limit.total)
             res.set('X-RateLimit-Remaining', limit.remaining)
+            res.set('X-RateLimit-Reset', Math.ceil(limit.reset / 1000)) // UTC epoch seconds
           }
 
           if (limit.remaining) return next()
