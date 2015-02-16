@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ded/express-limiter.git"
+    "url": "git://github.com/jgtoriginal/express-limiter.git"
   },
   "bugs": {
-    "url": "https://github.com/ded/express-limiter/issues"
+    "url": "https://github.com/jgtoriginal/express-limiter/issues"
   },
-  "homepage": "https://github.com/ded/express-limiter",
+  "homepage": "https://github.com/jgtoriginal/express-limiter",
   "devDependencies": {
     "express": "4.0.0",
     "redis": "~0.10.1",
