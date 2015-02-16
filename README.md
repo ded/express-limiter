@@ -65,7 +65,9 @@ limiter(options)
  - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limiter.
  - `skipHeaders`: `Boolean` whether to skip sending HTTP headers for rate limits ()
  - `ignoreErrors`: `Boolean` whether errors generated from redis should allow the middleware to call next().  Defaults to false.
-  - `log`: `Boolean` whether to log or throttle requests above the limit, handy when you want to understand your traffic before limiting.  Defaults to false.
+ - `log`: `Boolean` whether to log the limmiter behaiviour, handy when you want to understand understand why the throttle triggered when you have continous changes on your traffic.  Defaults to false.
+ - `logOnly`: `Boolean` whether to log or throttle requests above the limit, handy when you want to understand your traffic before limiting.  Defaults to false.
+
 
 ### Examples
 
