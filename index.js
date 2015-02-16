@@ -1,5 +1,5 @@
 module.exports = function (app, db) {
-  return function (opts) {
+  return function (opts, callback) {
     var middleware = function (req, res, next) {
       if (opts.whitelist && opts.whitelist(req)) return next()
       opts.lookup = Array.isArray(opts.lookup) ? opts.lookup : [opts.lookup]
