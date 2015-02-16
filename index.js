@@ -4,6 +4,8 @@ module.exports = function (app, db) {
       if (opts.log) {
         var logData = 'Path: '+opts.path+', Method: '+opts.method+', Lookup: '+opts.lookup+', Total: '+opts.total+', Expire: '+opts.expire;
         callback(logData);
+      }
+      if (opts.logOnly) {
         return next();
       }
       if (opts.whitelist && opts.whitelist(req)) return next()
