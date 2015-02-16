@@ -5,7 +5,7 @@ module.exports = function (app, db) {
       opts.lookup = Array.isArray(opts.lookup) ? opts.lookup : [opts.lookup]
 
       var lookups = opts.lookup.map(function (item) {
-        return item + ':' + item.split('.').reduce(function (prev, cur) {
+        return !Array.isArray(item) ? item : item + ':' + item.split('.').reduce(function (prev, cur) {
           return prev[cur]
         }, req)
       }).join(':')
