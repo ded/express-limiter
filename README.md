@@ -28,6 +28,24 @@ limiter({
   expire: 1000 * 60 * 60
 })
 
+/**
+* You can also set log to true and use a callback to handle that data.
+* This is handy for cases in which you want to understand what's your traffic like, before setting any limit.
+*/
+
+limiter({
+  path: '/api/action',
+  method: 'get',
+  lookup: ['connection.remoteAddress'],
+  // 150 requests per hour
+  total: 150,
+  expire: 1000 * 60 * 60,
+  // By default log is set to false
+  log: true
+}, function (data){
+  console.log(data)
+})
+
 app.get('/api/action', function (req, res) {
   res.send(200, 'ok')
 })
@@ -47,6 +65,7 @@ limiter(options)
  - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limiter.
  - `skipHeaders`: `Boolean` whether to skip sending HTTP headers for rate limits ()
  - `ignoreErrors`: `Boolean` whether errors generated from redis should allow the middleware to call next().  Defaults to false.
+  - `log`: `Boolean` whether to log or throttle requests above the limit, handy when you want to understand your traffic before limiting.  Defaults to false.
 
 ### Examples
 
