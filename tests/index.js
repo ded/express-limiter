@@ -43,6 +43,7 @@ describe('rate-limiter', function () {
           .get('/route')
           .expect('X-RateLimit-Limit', 10)
           .expect('X-RateLimit-Remaining', item - 1)
+          .expect('X-RateLimit-Reset', 3600)
           .expect(200, function (e) {f(e)})
         })
       }
@@ -52,6 +53,7 @@ describe('rate-limiter', function () {
       .get('/route')
       .expect('X-RateLimit-Limit', 10)
       .expect('X-RateLimit-Remaining', 0)
+      .expect('X-RateLimit-Reset', 3600)
       .expect('Retry-After', /\d+/)
       .expect(429, function (e) {f(e)})
     })
@@ -62,6 +64,7 @@ describe('rate-limiter', function () {
       .get('/route')
       .expect('X-RateLimit-Limit', 10)
       .expect('X-RateLimit-Remaining', 9)
+      .expect('X-RateLimit-Reset', 7201)
       .expect(200, function (e) {
         clock.restore()
         f(e)
