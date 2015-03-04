@@ -1,11 +1,11 @@
 module.exports = function (app, db) {
   return function (opts, callback) {
     var middleware = function (req, res, next) {
-      if (opts.log) {
+      if (opts.log !== false) {
         var logData = 'Path: '+opts.path+', Method: '+req.method+', Lookup: '+opts.lookup+', Total: '+opts.total+', Expire: '+opts.expire;
         callback(logData);
       }
-      if (opts.logOnly) {
+      if (opts.logOnly !== false) {
         return next();
       }
       if (opts.whitelist && opts.whitelist(req)) return next()
