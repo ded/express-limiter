@@ -2,7 +2,7 @@ module.exports = function (app, db) {
   return function (opts, callback) {
     var middleware = function (req, res, next) {
       if (opts.log !== false) {
-        var logData = 'Path: '+opts.path+', Method: '+req.method+', Lookup: '+opts.lookup+', Total: '+opts.total+', Expire: '+opts.expire;
+        var logData = 'Path: '+opts.request+', Method: '+opts.method+', Lookup: '+opts.lookup+', Total: '+opts.total+', Expire: '+opts.expire;
         callback(logData);
       }
       if (opts.logOnly !== false) {
