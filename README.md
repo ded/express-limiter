@@ -58,6 +58,7 @@ limiter(options)
 ```
 
  - `path`: `String` *optional* route path to the request
+ - `request`: `String` *optional* actual request `req.path`
  - `method`: `String` not really *optional* http method. accepts `get`, `post`, `put`, `delete`, and of course Express' `all`. If you want to log each type, you better do `req.method.toLowerCase()`
  - `lookup`: `String|Array.<String>` value lookup on the request object. Can be a single value or array. See [examples](#examples) for common usages
  - `total`: `Number` allowed number of requests before getting rate limited
