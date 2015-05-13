@@ -127,6 +127,32 @@ describe('rate-limiter', function () {
         stub.restore()
       })
     })
+
+    it('should process lookup as a function', function (done) {
+      limiter({
+        path: '*',
+        method: 'all',
+        lookup: function (req, res, opts, next) {
+          opts.lookup = 'query.api_key';
+          opts.total = 20
+          return next()
+        },
+        total: 3,
+        expire: 1000 * 60 * 60
+      })
+
+      app.get('/route', function (req, res) {
+        res.send(200, 'hello')
+      })
+
+      request(app)
+      .get('/route?api_key=foobar')
+      .expect('X-RateLimit-Limit', 20)
+      .expect('X-RateLimit-Remaining', 19)
+      .expect(200, function (e) {
+        done(e)
+      })
+    })
   })
 
   context('direct middleware', function () {
