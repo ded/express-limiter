@@ -47,6 +47,7 @@ limiter(options)
  - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limiter.
  - `skipHeaders`: `Boolean` whether to skip sending HTTP headers for rate limits ()
  - `ignoreErrors`: `Boolean` whether errors generated from redis should allow the middleware to call next().  Defaults to false.
+ - `onRateLimited`: `Function` called when a request exceeds the configured rate limit.
 
 ### Examples
 
@@ -101,6 +102,16 @@ limiter({
     return !!req.user.is_admin
   },
   skipHeaders: true
+})
+
+// call a custom limit handler
+limiter({
+  path: '*',
+  method: 'all',
+  lookup: 'connection.remoteAddress',
+  onRateLimited: function (req, res, next) {
+    next({ message: 'Rate limit exceeded', status: 429 })
+  }
 })
 
 ```

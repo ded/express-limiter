@@ -3,7 +3,9 @@ module.exports = function (app, db) {
     var middleware = function (req, res, next) {
       if (opts.whitelist && opts.whitelist(req)) return next()
       opts.lookup = Array.isArray(opts.lookup) ? opts.lookup : [opts.lookup]
-
+      opts.onRateLimited = typeof opts.onRateLimited === 'function' ? opts.onRateLimited : function (req, res, next) {
+        res.status(429).send('Rate limit exceeded')
+      }
       var lookups = opts.lookup.map(function (item) {
         return item + ':' + item.split('.').reduce(function (prev, cur) {
           return prev[cur]
@@ -41,7 +43,7 @@ module.exports = function (app, db) {
 
           if (!opts.skipHeaders) res.set('Retry-After', after)
 
-          res.status(429).send('Rate limit exceeded')
+          opts.onRateLimited(req, res, next)
         })
 
       })
