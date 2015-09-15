@@ -41,7 +41,7 @@ limiter(options)
 
  - `path`: `String` *optional* route path to the request
  - `method`: `String` *optional* http method. accepts `get`, `post`, `put`, `delete`, and of course Express' `all`
- - `lookup`: `String|Array.<String>` value lookup on the request object. Can be a single value or array. See [examples](#examples) for common usages
+ - `lookup`: `Function|String|Array.<String>` value lookup on the request object. Can be a single value, array or function. See [examples](#examples) for common usages
  - `total`: `Number` allowed number of requests before getting rate limited
  - `expire`: `Number` amount of time in `ms` before the rate-limited is reset
  - `whitelist`: `function(req)` optional param allowing the ability to whitelist. return `boolean`, `true` to whitelist, `false` to passthru to limiter.
@@ -111,6 +111,20 @@ limiter({
   lookup: 'connection.remoteAddress',
   onRateLimited: function (req, res, next) {
     next({ message: 'Rate limit exceeded', status: 429 })
+  }
+})
+
+// with a function for dynamic-ness
+limiter({
+  lookup: function(req, res, opts, next) {
+    if (validApiKey(req.query.api_key)) {
+      opts.lookup = 'query.api_key'
+      opts.total = 100
+    } else {
+      opts.lookup = 'connection.remoteAddress'
+      opts.total = 10
+    }
+    return next()
   }
 })
 
