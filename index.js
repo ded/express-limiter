@@ -49,8 +49,9 @@ module.exports = function (app, db) {
       })
     }
     if (typeof(opts.lookup) === 'function') {
+      var callableLookup = opts.lookup;
       middleware = function (middleware, req, res, next) {
-        return opts.lookup(req, res, opts, function () {
+        return callableLookup(req, res, opts, function () {
           return middleware(req, res, next)
         })
       }.bind(this, middleware)
