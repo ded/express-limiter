@@ -7,13 +7,14 @@ module.exports = function (app, db) {
         res.status(429).send('Rate limit exceeded')
       }
       var lookups = opts.lookup.map(function (item) {
-        return item + ':' + item.split('.').reduce(function (prev, cur) {
+        return item.split('.').reduce(function (prev, cur) {
           return prev[cur]
         }, req)
       }).join(':')
       var path = opts.path || req.path
       var method = (opts.method || req.method).toLowerCase()
-      var key = 'ratelimit:' + path + ':' + method + ':' + lookups
+      var prefix = opts.prefix_redis_key || 'ratelimit:' + path + ':' + method;
+      var key =  prefix + ':' + lookups
       db.get(key, function (err, limit) {
         if (err && opts.ignoreErrors) return next()
         var now = Date.now()
