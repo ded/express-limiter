@@ -1,9 +1,9 @@
 module.exports = function (app, db) {
   var dbError = false
-  db.on("error", function(err) {
+  db.on('error', function (err) {
     dbError = true
   })
-  db.on("connect", function() {
+  db.on('connect', function () {
     dbError = false
   })
   return function (opts) {
