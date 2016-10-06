@@ -158,7 +158,6 @@ describe('rate-limiter', function () {
   context('direct middleware', function () {
 
     it('is able to mount without `path` and `method`', function (done) {
-      var clock = sinon.useFakeTimers()
       var middleware = limiter({
         lookup: 'connection.remoteAddress',
         total: 3,

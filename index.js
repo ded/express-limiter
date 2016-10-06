@@ -28,8 +28,9 @@ module.exports = function (app, db) {
           limit.remaining = opts.total
         }
 
+        var decrementAmount = opts.decrementAmount || 1
         // do not allow negative remaining
-        limit.remaining = Math.max(Number(limit.remaining) - 1, -1)
+        limit.remaining = Math.max(Number(limit.remaining) - decrementAmount, -1)
         db.set(key, JSON.stringify(limit), 'PX', opts.expire, function (e) {
           if (!opts.skipHeaders) {
             res.set('X-RateLimit-Limit', limit.total)
@@ -42,7 +43,6 @@ module.exports = function (app, db) {
           var after = (limit.reset - Date.now()) / 1000
 
           if (!opts.skipHeaders) res.set('Retry-After', after)
-
           opts.onRateLimited(req, res, next)
         })
 
