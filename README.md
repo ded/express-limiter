@@ -48,6 +48,7 @@ limiter(options)
  - `skipHeaders`: `Boolean` whether to skip sending HTTP headers for rate limits ()
  - `ignoreErrors`: `Boolean` whether errors generated from redis should allow the middleware to call next().  Defaults to false.
  - `onRateLimited`: `Function` called when a request exceeds the configured rate limit.
+ - `decrementAmount`: `Number` amount to decrement remaining amount (use with custom lookup function for a dynamic value).
 
 ### Examples
 
