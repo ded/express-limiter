@@ -102,6 +102,45 @@ describe('rate-limiter', function () {
           .expect(429, done)
     })
 
+    it('should process options.prefix', function (done) {
+      limiter({
+        path: '/route',
+        method: 'get',
+        lookup: ['connection.remoteAddress'],
+        total: 0,
+        expire: 1000 * 60 * 60,
+        prefix: 'Test-'
+      })
+
+      app.get('/route', function (req, res) {
+        res.send(200, 'hello')
+      })
+
+      request(app)
+        .get('/route')
+          .expect(function(res) {
+            if ('X-RateLimit-Limit'.toLowerCase() in res.headers) {
+              return 'X-RateLimit-Limit Header not to be set'
+            }
+          })
+          .expect(function(res) {
+            if ('X-RateLimit-Remaining'.toLowerCase() in res.headers) {
+              return 'X-RateLimit-Remaining Header not to be set'
+            }
+          })
+          .expect(function(res) {
+            if ('Test-RateLimit-Limit'.toLowerCase() in res.headers === false) {
+              return 'Test-RateLimit-Limit Header (custom prefix) to be set'
+            }
+          })
+          .expect(function(res) {
+            if ('Test-RateLimit-Remaining'.toLowerCase() in res.headers === false) {
+              return 'Test-RateLimit-Remaining Header (custom prefix) to be set'
+            }
+          })
+          .expect(429, done)
+    })
+
     it('should process ignoreErrors', function (done) {
       limiter({
         path: '/route',
