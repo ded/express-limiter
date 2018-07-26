@@ -1,4 +1,7 @@
-module.exports = function (app, db) {
+module.exports = function (app, db, clientType) {
+  if (clientType === 'mongodb') {
+    db.ensureIndex({ 'reset': 1 }, { 'expireAfterSeconds': 0 })
+  }
   return function (opts) {
     var middleware = function (req, res, next) {
       if (opts.whitelist && opts.whitelist(req)) return next()
@@ -14,39 +17,75 @@ module.exports = function (app, db) {
       var path = opts.path || req.path
       var method = (opts.method || req.method).toLowerCase()
       var key = 'ratelimit:' + path + ':' + method + ':' + lookups
-      db.get(key, function (err, limit) {
-        if (err && opts.ignoreErrors) return next()
-        var now = Date.now()
-        limit = limit ? JSON.parse(limit) : {
-          total: opts.total,
-          remaining: opts.total,
-          reset: now + opts.expire
-        }
-
-        if (now > limit.reset) {
-          limit.reset = now + opts.expire
-          limit.remaining = opts.total
-        }
-
-        // do not allow negative remaining
-        limit.remaining = Math.max(Number(limit.remaining) - 1, -1)
-        db.set(key, JSON.stringify(limit), 'PX', opts.expire, function (e) {
-          if (!opts.skipHeaders) {
-            res.set('X-RateLimit-Limit', limit.total)
-            res.set('X-RateLimit-Reset', Math.ceil(limit.reset / 1000)) // UTC epoch seconds
-            res.set('X-RateLimit-Remaining', Math.max(limit.remaining,0))
+      var clientToUse = clientType || 'redis';
+      if (clientToUse === 'redis') {
+        db.get(key, function (err, limit) {
+          if (err && opts.ignoreErrors) return next()
+          var now = Date.now()
+          limit = limit ? JSON.parse(limit) : {
+            total: opts.total,
+            remaining: opts.total,
+            reset: now + opts.expire
           }
 
-          if (limit.remaining >= 0) return next()
+          if (now > limit.reset) {
+            limit.reset = now + opts.expire
+            limit.remaining = opts.total
+          }
 
-          var after = (limit.reset - Date.now()) / 1000
+          // do not allow negative remaining
+          limit.remaining = Math.max(Number(limit.remaining) - 1, -1)
+          db.set(key, JSON.stringify(limit), 'PX', opts.expire, function (e) {
+            if (!opts.skipHeaders) {
+              res.set('X-RateLimit-Limit', limit.total)
+              res.set('X-RateLimit-Reset', Math.ceil(limit.reset / 1000)) // UTC epoch seconds
+              res.set('X-RateLimit-Remaining', Math.max(limit.remaining, 0))
+            }
 
-          if (!opts.skipHeaders) res.set('Retry-After', after)
+            if (limit.remaining >= 0) return next()
 
-          opts.onRateLimited(req, res, next)
+            var after = (limit.reset - Date.now()) / 1000
+
+            if (!opts.skipHeaders) res.set('Retry-After', after)
+
+            opts.onRateLimited(req, res, next)
+          })
+
         })
+      } else if (clientToUse === 'mongodb') {
+        db.findOne({ key: key }, function (err, limit) {
+          if (err && opts.ignoreErrors) return next()
+          var now = Date.now()
+          limit = limit ? limit : {
+            total: opts.total,
+            remaining: opts.total,
+            reset: new Date(now + opts.expire)
+          }
 
-      })
+          if (now > limit.reset) {
+            limit.reset = new Date(now + opts.expire)
+            limit.remaining = opts.total
+          }
+
+          // do not allow negative remaining
+          limit.remaining = Math.max(Number(limit.remaining) - 1, -1)
+          db.update({ key: key }, { $set: { total: limit.total, remaining: limit.remaining, reset: limit.reset } }, { upsert: true }, function(e) {
+            if (!opts.skipHeaders) {
+              res.set('X-RateLimit-Limit', limit.total)
+              res.set('X-RateLimit-Reset', Math.ceil(limit.reset / 1000)) // UTC epoch seconds
+              res.set('X-RateLimit-Remaining', Math.max(limit.remaining, 0))
+            }
+
+            if (limit.remaining >= 0) return next()
+
+            var after = (limit.reset - Date.now()) / 1000
+            if (!opts.skipHeaders) res.set('Retry-After', after)
+
+            opts.onRateLimited(req, res, next)
+          })
+
+        })
+      }
     }
     if (typeof(opts.lookup) === 'function') {
       var callableLookup = opts.lookup;
