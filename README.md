@@ -1,16 +1,48 @@
 ## Express rate-limiter
-Rate limiting middleware for Express applications built on redis
+Rate limiting middleware for Express applications built on redis/mongodb
 
 ``` sh
 npm install express-limiter --save
 ```
 
+### Using redis
 ``` js
 var express = require('express')
 var app = express()
 var client = require('redis').createClient()
 
 var limiter = require('express-limiter')(app, client)
+
+/**
+ * you may also pass it an Express 4.0 `Router`
+ *
+ * router = express.Router()
+ * limiter = require('express-limiter')(router, client)
+ */
+
+limiter({
+  path: '/api/action',
+  method: 'get',
+  lookup: ['connection.remoteAddress'],
+  // 150 requests per hour
+  total: 150,
+  expire: 1000 * 60 * 60
+})
+
+app.get('/api/action', function (req, res) {
+  res.send(200, 'ok')
+})
+```
+
+### Using mongodb
+``` js
+var express = require('express')
+var app = express()
+var mongojs = require('mongojs')
+var db = mongojs('localhost/test')
+var mycollection = db.collection('mycollection')
+
+var limiter = require('express-limiter')(app, mycollection, 'mongodb')
 
 /**
  * you may also pass it an Express 4.0 `Router`
