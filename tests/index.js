@@ -153,6 +153,25 @@ describe('rate-limiter', function () {
         done(e)
       })
     })
+
+    it('should work with undefined lookups', function (done) {
+      limiter({
+        path: '/route',
+        method: 'get',
+        lookup: ['doesNotExist.remoteAddress', 'connection.doesNotExist'],
+        total: 0,
+        expire: 1000 * 60 * 60,
+        skipHeaders: true
+      })
+
+      app.get('/route', function (req, res) {
+        res.send(200, 'hello')
+      })
+
+      request(app)
+        .get('/route')
+        .expect(429, done)
+    })
   })
 
   context('direct middleware', function () {
