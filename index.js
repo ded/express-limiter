@@ -8,7 +8,7 @@ module.exports = function (app, db) {
       }
       var lookups = opts.lookup.map(function (item) {
         return item + ':' + item.split('.').reduce(function (prev, cur) {
-          return prev[cur]
+          return prev ? prev[cur] : undefined
         }, req)
       }).join(':')
       var path = opts.path || req.path
